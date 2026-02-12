@@ -1,0 +1,61 @@
+using UnityEngine;
+
+[RequireComponent(typeof(Renderer))]
+public class CubeGodMode : MonoBehaviour
+{
+    public float floatHeight = 0.5f;
+    public float floatSpeed = 2f;
+
+    public float rotationSpeed = 50f;
+
+    public float pulseSpeed = 3f;
+    public float pulseAmount = 0.2f;
+
+    public float colorSpeed = 1f;
+
+    private Vector3 startPos;
+    private Renderer rend;
+    private Material mat;
+
+    void Start()
+    {
+        startPos = transform.position;
+        rend = GetComponent<Renderer>();
+        mat = rend.material;
+
+        // Ativa emissão
+        mat.EnableKeyword("_EMISSION");
+    }
+
+    void Update()
+    {
+        Float();
+        Rotate();
+        ChangeColor();
+        Pulse();
+    }
+
+    void Float()
+    {
+        float newY = startPos.y + Mathf.Sin(Time.time * floatSpeed) * floatHeight;
+        transform.position = new Vector3(startPos.x, newY, startPos.z);
+    }
+
+    void Rotate()
+    {
+        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+    }
+
+    void ChangeColor()
+    {
+        Color color = Color.HSVToRGB(Mathf.PingPong(Time.time * colorSpeed, 1), 1, 1);
+        mat.color = color;
+        mat.SetColor("_EmissionColor", color * 2f);
+    }
+
+    void Pulse()
+    {
+        float scale = 1 + Mathf.Sin(Time.time * pulseSpeed) * pulseAmount;
+        transform.localScale = new Vector3(scale, scale, scale);
+    }
+}
